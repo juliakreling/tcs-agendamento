@@ -1,0 +1,38 @@
+{
+    'kind': 
+    'calendar#event', 
+    'etag': '"3370058306543000"', 
+    'id': '3k192ptbc04meo40r8lo9q221l_20230526T160000Z', 
+    'status': 'confirmed', 
+    'htmlLink': 'https://www.google.com/calendar/event?eid=M2sxOTJwdGJjMDRtZW80MHI4bG85cTIyMWxfMjAyMzA1MjZUMTYwMDAwWiBkMjU2MDFkMDA4YTg0ZDAxNDU3ZDA1NzEwZmE3MTk5OGE5M2JiNmM1YjU1ZTBkZjMzMjA4N2IxNjRiYWRhYjczQGc', 
+    'created': '2023-05-25T04:19:59.000Z', 
+    'updated': '2023-05-26T02:09:21.376Z', 
+    'summary': 'banho+tosawwwwww', 
+    'creator': {
+        'email': 'juliakreling2@gmail.com'
+        }, 
+    'organizer': {
+        'email': 'd25601d008a84d01457d05710fa71998a93bb6c5b55e0df332087b164badab73@group.calendar.google.com', 
+        'displayName': 'Disponível', 
+        'self': True
+        }, 
+    'start': {
+        'dateTime': '2023-05-25T13:00:00-03:00', 
+        'timeZone': 'America/Sao_Paulo'
+        }, 
+    'end': {
+        'dateTime': '2023-05-25T14:00:00-03:00', 
+        'timeZone': 'America/Sao_Paulo'
+        }, 
+    'recurringEventId': '3k192ptbc04meo40r8lo9q221l', 
+    'originalStartTime': {
+        'dateTime': '2023-05-26T13:00:00-03:00', 
+        'timeZone': 'America/Sao_Paulo'
+        }, 
+    'iCalUID': '3k192ptbc04meo40r8lo9q221l@google.com', 
+    'sequence': 3, 
+    'reminders': {
+        'useDefault': False
+        }, 
+    'eventType': 'default'
+}
