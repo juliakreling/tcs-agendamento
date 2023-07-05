@@ -1,9 +1,14 @@
-// from listar_eventos_nao_confirmados import ClasseListarEventosNaoConfirmados
-import ClasseListarEventosNaoConfirmados from listar_eventos_nao_confirmados
 
 const wppconnect = require('@wppconnect-team/wppconnect');
+const { error } = require('console');
+const http = require('http');
+
+const id_calendario_disponivel = 'd25601d008a84d01457d05710fa71998a93bb6c5b55e0df332087b164badab73'
+const id_calendario_confirmados = '812bfe549dd5ab2c747bac7874a0c500103766d05ce9d03a808bc9769fbefa5b'
+const id_calendario_nao_confirmados = '3a0334f8befd7aa68908f7dda72f253efb0aec7adf8edf86ee390195cb7130f3'
 
 var userStages = [];
+var id_eventos_em_espera = {};
 
 wppconnect.create({
     session: 'whatsbot',
@@ -12,35 +17,227 @@ wppconnect.create({
 })
     .then((client) =>
         client.onMessage((message) => {
-            console.log('Mensagem digitada pelo usuário: ' + message.body);
             stages(client, message);
         }))
     .catch((error) =>
         console.log(error));
 
 
-function stages(client, message) {
-    stage = userStages[message.from];
+function sendWppMessage(client, sendTo, text) {
+    return new Promise((resolve, reject) =>{
+        client
+        .sendText(sendTo, text)
+        .then((result) => {
+            resolve(result); 
+        })
+        .catch((erro) => {
+            console.error('ERRO: ', erro);
+        });
+    });
+}
+
+function formatarEventos(jsonData) {
+    let mensagemFormatada = 'Escolha um horário:\n\n';
+    for (let i = 0; i < jsonData.length; i++) {
+        const evento = jsonData[i];
+        const eventoFormatado = `${evento.start_datetime} - ${evento.summary} - ${evento.id}\n`;
+        mensagemFormatada += eventoFormatado;
+    }
+    return mensagemFormatada;
+}
+
+function listarEventosDisponiveis(parametro) {
+    return new Promise((resolve, reject) => {
+        http.get(`http://localhost:5000/listar_eventos_disponiveis/${parametro}`, (response) => {
+            let data = '';
+
+            response.on('data', (chunk) => {
+                data += chunk;
+            });
+
+            response.on('end', () => {
+                console.log("Resposta do servidor: ", data);
+                const jsonData = JSON.parse(data);
+                resolve(jsonData);
+            });
+
+        }).on('error', (error) => {
+            reject(error);
+        });
+    });
+}
+
+function listarEventosPorNomeCliente(parametro){
+    return new Promise((resolve, reject) => {
+        http.get(`http://127.0.0.1:5002/listar_eventos_nome_cliente/${parametro}`, (response) => {
+            let data = '';
+
+            response.on('data', (chunk) => {
+                data += chunk;
+            });
+
+            response.on('end', () => {
+                console.log("Resposta do servidor: ", data);
+                const jsonData = JSON.parse(data);
+                resolve(jsonData);
+            });
+
+        }).on('error', (error) => {
+            reject(error);
+        });
+    });
+}
+
+function editar_evento(message, id_evento, dados_cliente){
+    return new Promise((resolve, reject) => {
+        http.get(`http://localhost:5001/editar_evento/${id_evento}/${dados_cliente}`, (response) => {
+            let data = '';
+
+            response.on('data', (chunk) => {
+                data += chunk;
+            });
+
+            response.on('end', () => {
+                console.log("Resposta do servidor: ", data);
+                const jsonData = JSON.parse(data);
+                if (jsonData.message === "Evento editado com sucesso!"){
+                    delete id_eventos_em_espera[message.from];
+                    for (let id in id_eventos_em_espera) {
+                        console.log('DELETE id_eventos_em_espera  = ', id, id_eventos_em_espera[id]);
+                    }
+                    resolve(jsonData);
+                } else {
+                    reject("Erro ao editar o evento");
+                }
+            });
+
+        }).on('error', (error) => {
+            reject(error);
+        });
+    });
+}
+
+function cancelar_evento(id_evento){
+    return new Promise((resolve, reject) => {
+        http.get(`http://127.0.0.1:5003/cancelar_evento/${id_evento}`, (response) => {
+            let data = '';
+
+            response.on('data', (chunk) => {
+                data += chunk;
+            });
+
+            response.on('end', () => {
+                console.log("Resposta do servidor: ", data);
+                const jsonData = JSON.parse(data);
+                if (jsonData.message === "Evento cancelado com sucesso!"){
+                    resolve(jsonData.message);
+                } else {
+                    reject("Erro ao editar o evento");
+                }
+            });
+
+        }).on('error', (error) => {
+            reject(error);
+        });
+    });
+}
+
+
+async function stages(client, message) {
+    let stage = userStages[message.from];
+    if (!stage) {
+        stage = 'default';
+        userStages[message.from] = stage;
+    }
+
+    console.log('userStages no início --', userStages[message.from]);
+
     switch (stage) {
         case 'agendarHorario':
-            //listar_eventos = ClasseListarEventosNaoConfirmados()
-            // USAR FLASK PRA FAZER ISSOOO!
-           
-            userStages[message.from] = 'CPF';
+            await sendWppMessage(client, message.from, 'Você gostaria de visualizar os horários disponíveis dentro de quantos dias?\n*1* dia\n*3* dias\n*7* dias');
+            userStages[message.from] = 'aguardandoDiasAgendamento';
             break;
+
+        case 'aguardandoDiasAgendamento':
+            const days = message.body;
+            const floatDays = parseFloat(days).toFixed(1);
+            try {
+                const jsonData = await listarEventosDisponiveis(floatDays);
+                const mensagemFormatada = formatarEventos(jsonData);
+                await sendWppMessage(client, message.from, mensagemFormatada);
+                userStages[message.from] = 'escolhaHorarioAgendamento';
+                break;
+            } catch (error) {
+                console.error('Ocorreu um erro ao fazer a solicitação:', error);
+                break;
+            }
+
+        case 'escolhaHorarioAgendamento':
+            const horarioEscolhido = message.body;
+            id_eventos_em_espera[message.from] = horarioEscolhido;
+            for (let id in id_eventos_em_espera) {
+                console.log('LOG DO OBJETO id_eventos_em_espera = ', id, id_eventos_em_espera[id]);
+            }
+            await sendWppMessage(client, message.from, 'Para agendar, digite: \nNome completo do responsável\nTelefone do responsável\nNome do pet\nRaça do pet\nPorte do pet (pequeno, médio ou grande)')
+            userStages[message.from] = 'esperandoDadosAgendamento';
+            break;
+
+        case 'esperandoDadosAgendamento':
+            let id_evento = id_eventos_em_espera[message.from];
+            if(id_evento){
+                const dadosCliente = message.body;
+                // PRECISO ARRUMAR ISSO DAQUI.........
+                editar_evento(message.from, id_evento, dadosCliente)
+                const texto = "Agendado!\nSeu atendimento está sendo encerrado.";
+                sendWppMessage(client, message.from, texto);
+                userStages[message.from] = 'default';
+            }
+            break;
+
         case 'cancelarHorario':
-            const cpf = message.body;
-            sendWppMessage(client, message.from, 'Obrigada por informar seu CPF: ' + cpf);
-            sendWppMessage(client, message.from, 'Fim');
-            userStages[message.from] = 'Fim';
+            await sendWppMessage(client, message.from, 'Para cancelar um horário digite seu nome completo.');
+            userStages[message.from] = 'aguardandoNomeCompletoCancelamento';
             break;
+
+        case 'aguardandoNomeCompletoCancelamento':
+            const nomeCompleto = message.body;
+            try {
+                const jsonData = await listarEventosPorNomeCliente(nomeCompleto);
+                const mensagemFormatada = formatarEventos(jsonData);
+                await sendWppMessage(client, message.from, mensagemFormatada);
+                userStages[message.from] = 'escolhaHorarioCancelamento';
+                break;
+            } catch (error) {
+                console.error('Ocorreu um erro ao fazer a solicitação:', error);
+            }
+            break;
+        
+        case 'escolhaHorarioCancelamento':
+            const horarioCancelamento = message.body;
+            cancelar_evento(horarioCancelamento)
+            .then(jsonData => {
+                const texto = "Cancelado!\nSeu atendimento está sendo encerrado.";
+                sendWppMessage(client, message.from, texto);
+                userStages[message.from] = 'default';
+            })
+            .catch(error => {
+                console.error("Erro ao cancelar o evento", error);
+                const texto = "Erro ao cancelar evento.";
+                sendWppMessage(client, message.from, texto);
+                userStages[message.from] = 'default';
+            })
+            break;
+
         case 'encerrarAtendimento':
-            sendWppMessage(client, message.from, 'Atendimento encerrado.');
+            await sendWppMessage(client, message.from, 'Atendimento encerrado.');
+            userStages[message.from] = 'default';
             break;
+
         default:
-            // console.log('*Usuário atual* from:' + message.from);
-            sendWppMessage(client, message.from, 'Seja bem vindo! Escolha a opção desejada: \n1 - Agendar horário\n2 - Cancelar horário agendado\n3 - Encerrar Atendimento');
-            switch(message.body){
+            console.log('mensagem no default: ', message.body)
+            console.log('userStages no default --', userStages[message.from]);
+            await sendWppMessage(client, message.from, 'Seja bem-vindo! Escolha a opção desejada: \n*1* - Agendar horário\n*2* - Cancelar horário agendado\n*3* - Encerrar Atendimento');
+            switch (message.body) {
                 case '1':
                     userStages[message.from] = 'agendarHorario';
                     break;
@@ -51,19 +248,11 @@ function stages(client, message) {
                     userStages[message.from] = 'encerrarAtendimento';
                     break;
                 default:
-                    sendWppMessage(client, message.from, 'Opção inválida!');
+                    console.log('NAO PODE CAIR AQUI, OQ FACO????');
+                    break;
             }
+            break;
     }
-}
 
-
-function sendWppMessage(client, sendTo, text) {
-    client
-        .sendText(sendTo, text)
-        .then((result) => {
-            // console.log('SUCESSO: ', result); 
-        })
-        .catch((erro) => {
-            console.error('ERRO: ', erro);
-        });
+    console.log('userStages no final --', userStages[message.from]);
 }

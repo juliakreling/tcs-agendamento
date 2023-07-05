@@ -1,39 +1,6 @@
-2023/06/29-23:44:58.819 a703 Reusing MANIFEST /Users/juliagabrielekreling/tcs-primeira-entrega/agendamento/tokens/whatsbot/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2023/06/29-23:44:58.819 a703 Recovering log #4
-2023/06/29-23:44:58.821 a703 Reusing old log /Users/juliagabrielekreling/tcs-primeira-entrega/agendamento/tokens/whatsbot/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000004.log 
-2023/06/29-23:44:58.838 9903 Level-0 table #8: started
-2023/06/29-23:44:58.851 9903 Level-0 table #8: 58980 bytes OK
-2023/06/29-23:44:58.860 9903 Delete type=0 #4
-2023/06/29-23:44:58.860 9903 Manual compaction at level-0 from '\x00\x06\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x07\x00\x00\x00' @ 0 : 0; will stop at (end)
-2023/06/29-23:44:58.865 8103 Level-0 table #10: started
-2023/06/29-23:44:58.873 8103 Level-0 table #10: 1655 bytes OK
-2023/06/29-23:44:58.881 8103 Delete type=0 #7
-2023/06/29-23:44:58.881 e603 Manual compaction at level-0 from '\x00\x05\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x06\x00\x00\x00' @ 0 : 0; will stop at '\x00\x05\x05\x02\x03\x00\x00\x00\x00\x00\x00\xf0?' @ 5530 : 0
-2023/06/29-23:44:58.881 e603 Compacting 1@0 + 1@1 files
-2023/06/29-23:44:58.898 e603 Generated table #11@0: 1718 keys, 21036 bytes
-2023/06/29-23:44:58.898 e603 Compacted 1@0 + 1@1 files => 21036 bytes
-2023/06/29-23:44:58.905 e603 compacted to: files[ 0 1 1 0 0 0 0 ]
-2023/06/29-23:44:58.905 e603 Delete type=2 #10
-2023/06/29-23:44:58.905 8103 Manual compaction at level-0 from '\x00\x05\x05\x02\x03\x00\x00\x00\x00\x00\x00\xf0?' @ 5530 : 0 .. '\x00\x06\x00\x00\x00' @ 0 : 0; will stop at (end)
-2023/06/29-23:44:58.905 8103 Level-0 table #13: started
-2023/06/29-23:44:58.909 8103 Level-0 table #13: 5012 bytes OK
-2023/06/29-23:44:58.917 8103 Delete type=2 #8
-2023/06/29-23:44:58.917 8103 Delete type=0 #9
-2023/06/29-23:44:58.917 8103 Manual compaction at level-0 from '\x00\x04\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x05\x00\x00\x00' @ 0 : 0; will stop at '\x00\x07\x00\x00\xc8\x11\x00w\x00o\x00r\x00k\x00e\x00r\x00_\x00w\x00a\x00m\x00_\x00e\x00v\x00e\x00n\x00t\x00s' @ 5837 : 1
-2023/06/29-23:44:58.917 8103 Compacting 1@0 + 1@1 files
-2023/06/29-23:44:58.921 8103 Generated table #14@0: 1986 keys, 24185 bytes
-2023/06/29-23:44:58.921 8103 Compacted 1@0 + 1@1 files => 24185 bytes
-2023/06/29-23:44:58.928 8103 compacted to: files[ 0 1 1 0 0 0 0 ]
-2023/06/29-23:44:58.928 8103 Delete type=2 #13
-2023/06/29-23:44:58.928 8103 Manual compaction at level-0 from '\x00\x07\x00\x00\xc8\x11\x00w\x00o\x00r\x00k\x00e\x00r\x00_\x00w\x00a\x00m\x00_\x00e\x00v\x00e\x00n\x00t\x00s' @ 5837 : 1 .. '\x00\x05\x00\x00\x00' @ 0 : 0; will stop at (end)
-2023/06/29-23:44:58.928 8103 Level-0 table #16: started
-2023/06/29-23:44:58.932 8103 Level-0 table #16: 3902 bytes OK
-2023/06/29-23:44:58.938 8103 Delete type=0 #12
-2023/06/29-23:44:58.938 8103 Delete type=2 #11
-2023/06/29-23:44:58.938 8103 Manual compaction at level-0 from '\x00\x03\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x04\x00\x00\x00' @ 0 : 0; will stop at '\x00\x03\x06 \x03\x00\x00\x00\x00\x00\x80V@\x00\x01\x0b\x00I\x00d\x00T\x00t\x00l\x009\x000\x00D\x00a\x00y\x00s' @ 6213 : 0
-2023/06/29-23:44:58.938 8103 Compacting 1@0 + 1@1 files
-2023/06/29-23:44:58.942 8103 Generated table #17@0: 1673 keys, 15905 bytes
-2023/06/29-23:44:58.942 8103 Compacted 1@0 + 1@1 files => 15905 bytes
-2023/06/29-23:44:58.949 8103 compacted to: files[ 0 1 1 0 0 0 0 ]
-2023/06/29-23:44:58.949 8103 Delete type=2 #16
-2023/06/29-23:44:58.949 8103 Manual compaction at level-0 from '\x00\x03\x06 \x03\x00\x00\x00\x00\x00\x80V@\x00\x01\x0b\x00I\x00d\x00T\x00t\x00l\x009\x000\x00D\x00a\x00y\x00s' @ 6213 : 0 .. '\x00\x04\x00\x00\x00' @ 0 : 0; will stop at (end)
+2023/07/05-01:39:42.205 a703 Reusing MANIFEST /Users/juliagabrielekreling/tcs-primeira-entrega/agendamento/tokens/whatsbot/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2023/07/05-01:39:42.205 a703 Recovering log #698
+2023/07/05-01:39:42.218 a703 Reusing old log /Users/juliagabrielekreling/tcs-primeira-entrega/agendamento/tokens/whatsbot/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000698.log 
+2023/07/05-01:44:53.918 a703 Level-0 table #703: started
+2023/07/05-01:44:53.937 a703 Level-0 table #703: 1204491 bytes OK
+2023/07/05-01:44:53.945 a703 Delete type=0 #698

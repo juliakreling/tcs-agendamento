@@ -1,12 +1,13 @@
 from __future__ import print_function
-import datetime
-import os.path
+import math
+from flask import Flask, jsonify
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta
+import os.path
 
 
 # SEMPRE QUE MODIFICAR ESSE SCOPES PRECISA DELETAR O ARQUIVO token.json
@@ -29,21 +30,20 @@ class ClasseListarEventosDisponiveis():
                 creds = flow.run_local_server(port=0)
             with open('token.json', 'w') as token:
                 token.write(creds.to_json())
-
         try:
             service = build('calendar', 'v3', credentials=creds)
             lista_eventos = []
-
             # Obtém a data atual
             agora = datetime.utcnow()
             # Define o intervalo de tempo para a consulta
             inicio = agora.date()
-            fim = inicio + timedelta(days=qtde_dias)
+            fim = inicio + timedelta(days=math.floor(qtde_dias))
+            fim_fim_fim = fim - timedelta(days=1.0)
             # Converte as datas em formato RFC3339
-            time_min = inicio.isoformat() + 'T00:00:00Z'
-            time_max = fim.isoformat() + 'T00:00:00Z'
-            page_token = None
+            time_min = inicio.isoformat() + 'T' + agora.strftime('%H:%M:%S') + 'Z'
+            time_max = fim_fim_fim.isoformat() + 'T23:59:59Z'
 
+            page_token = None
             while True:
                 events = service.events().list(
                     calendarId=ID_CALENDARIO_DISPONIVEL,
@@ -52,7 +52,7 @@ class ClasseListarEventosDisponiveis():
                     pageToken=page_token
                 ).execute()
                 for event in events['items']:
-                    if 'start' in event and 'dateTime' in event['start']:
+                    if 'summary' in event:
                         objeto_evento = Evento(
                             event['id'],
                             event['summary'],
@@ -63,8 +63,8 @@ class ClasseListarEventosDisponiveis():
                 if not page_token:
                     break
             return lista_eventos
-        except Exception as e:
-            print("Ocorreu um erro ao listar os eventos:", str(e))
+        except HttpError as error:
+            print('Ocorreu um erro: %s' % error)
 
     def formatarEventosDisponiveis(self, qtde_dias: float) -> list:
         nao_formatados = self.listarEventosDisponiveis(qtde_dias)
@@ -75,9 +75,11 @@ class ClasseListarEventosDisponiveis():
             inicio_formatado = inicio.strftime(f"%d-%m-%Y %H:%M")
             evento_formatado = {
                 'id': evento.id,
-                'start_datetime': inicio_formatado,
+                'summary': evento.summary,
+                'start_datetime': inicio_formatado
             }
             lista_formatada.append(evento_formatado)
+        print("LISTA EVENTOS disponiveis!!! ", lista_formatada)
         return lista_formatada
 
 
@@ -88,15 +90,18 @@ class Evento:
         self.start_datetime = start_datetime
 
 
-# lista = ClasseListarEventosDisponiveis()
-# eventos_formatados = lista.listarEventosDisponiveis(2.0)
-# # print("eventos_formatados:  ", eventos_formatados)
-# # eventos_formatados = lista.formatarEventosDisponiveis(1)
-# for evento in eventos_formatados:
-#     inicio = datetime.strptime(evento.start_datetime, f"%Y-%m-%dT%H:%M:%S%z")
-#     inicio_formatado = inicio.strftime(f"%d-%m-%Y %H:%M")
-#     print()
-#     print("ID: ", evento.id)
-#     print("titulo: ", evento.summary)
-#     print("Início: ", inicio_formatado)
-#     print()
+listar_eventos = ClasseListarEventosDisponiveis()
+app = Flask(__name__)
+
+
+@app.route('/listar_eventos_disponiveis/<float:parametro>', methods=['GET'])
+def obter_eventos(parametro):
+    eventos_formatados = listar_eventos.formatarEventosDisponiveis(parametro)
+    return jsonify(eventos_formatados)
+
+
+if __name__ == '__main__':
+    app.run(port=5000)
+
+
+# http://127.0.0.1:5000/listar_eventos_disponiveis/2.0
