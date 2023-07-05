@@ -37,7 +37,7 @@ function sendWppMessage(client, sendTo, text) {
 }
 
 function formatarEventos(jsonData) {
-    let mensagemFormatada = 'Escolha um horário:\n\n';
+    let mensagemFormatada = 'Escolha um horário por ID:\n\n';
     for (let i = 0; i < jsonData.length; i++) {
         const evento = jsonData[i];
         const eventoFormatado = `${evento.start_datetime} - ${evento.summary} - ${evento.id}\n`;
@@ -102,9 +102,6 @@ function editar_evento(message, id_evento, dados_cliente){
                 const jsonData = JSON.parse(data);
                 if (jsonData.message === "Evento editado com sucesso!"){
                     delete id_eventos_em_espera[message.from];
-                    for (let id in id_eventos_em_espera) {
-                        console.log('DELETE id_eventos_em_espera  = ', id, id_eventos_em_espera[id]);
-                    }
                     resolve(jsonData);
                 } else {
                     reject("Erro ao editar o evento");
@@ -161,23 +158,21 @@ async function stages(client, message) {
         case 'aguardandoDiasAgendamento':
             const days = message.body;
             const floatDays = parseFloat(days).toFixed(1);
-            try {
-                const jsonData = await listarEventosDisponiveis(floatDays);
-                const mensagemFormatada = formatarEventos(jsonData);
-                await sendWppMessage(client, message.from, mensagemFormatada);
-                userStages[message.from] = 'escolhaHorarioAgendamento';
-                break;
-            } catch (error) {
-                console.error('Ocorreu um erro ao fazer a solicitação:', error);
-                break;
-            }
+            listarEventosDisponiveis(floatDays)
+                .then(jsonData => {
+                    const mensagemFormatada = formatarEventos(jsonData);
+                    sendWppMessage(client, message.from, mensagemFormatada);
+                    userStages[message.from] = 'escolhaHorarioAgendamento';
+                })
+                .catch(error => {
+                    console.error('Ocorreu um erro ao fazer a solicitação:', error);
+                });
+            break;
 
         case 'escolhaHorarioAgendamento':
             const horarioEscolhido = message.body;
             id_eventos_em_espera[message.from] = horarioEscolhido;
-            for (let id in id_eventos_em_espera) {
-                console.log('LOG DO OBJETO id_eventos_em_espera = ', id, id_eventos_em_espera[id]);
-            }
+            console.log('id_eventos_em_espera no escolhaHorarioAgendamento == ', id_eventos_em_espera[message.from]);
             await sendWppMessage(client, message.from, 'Para agendar, digite: \nNome completo do responsável\nTelefone do responsável\nNome do pet\nRaça do pet\nPorte do pet (pequeno, médio ou grande)')
             userStages[message.from] = 'esperandoDadosAgendamento';
             break;
@@ -186,11 +181,19 @@ async function stages(client, message) {
             let id_evento = id_eventos_em_espera[message.from];
             if(id_evento){
                 const dadosCliente = message.body;
-                // PRECISO ARRUMAR ISSO DAQUI.........
                 editar_evento(message.from, id_evento, dadosCliente)
-                const texto = "Agendado!\nSeu atendimento está sendo encerrado.";
-                sendWppMessage(client, message.from, texto);
-                userStages[message.from] = 'default';
+                .then(jsonData => {
+                    console.log('DELETE id_eventos_em_espera  == ', id_eventos_em_espera[message.from]);
+                    const texto = "Agendado!\nSeu atendimento está sendo encerrado.";
+                    sendWppMessage(client, message.from, texto);
+                    userStages[message.from] = 'default';
+                })
+                .catch(error => {
+                    console.error("Erro ao agendar o evento", error);
+                    const texto = "Erro ao agendar evento.";
+                    sendWppMessage(client, message.from, texto);
+                    userStages[message.from] = 'default';
+                })
             }
             break;
 
@@ -201,15 +204,25 @@ async function stages(client, message) {
 
         case 'aguardandoNomeCompletoCancelamento':
             const nomeCompleto = message.body;
-            try {
-                const jsonData = await listarEventosPorNomeCliente(nomeCompleto);
+            // PRECISO ARRUMAR ISSO DAQUI.........
+            listarEventosPorNomeCliente(nomeCompleto)
+            .then(jsonData => {
                 const mensagemFormatada = formatarEventos(jsonData);
-                await sendWppMessage(client, message.from, mensagemFormatada);
+                sendWppMessage(client, message.from, mensagemFormatada);
                 userStages[message.from] = 'escolhaHorarioCancelamento';
-                break;
-            } catch (error) {
+            })
+            .catch(error => {
                 console.error('Ocorreu um erro ao fazer a solicitação:', error);
-            }
+            });                
+            // try {
+            //     const jsonData = await listarEventosPorNomeCliente(nomeCompleto);
+            //     const mensagemFormatada = formatarEventos(jsonData);
+            //     await sendWppMessage(client, message.from, mensagemFormatada);
+            //     userStages[message.from] = 'escolhaHorarioCancelamento';
+            //     break;
+            // } catch (error) {
+            //     console.error('Ocorreu um erro ao fazer a solicitação:', error);
+            // }
             break;
         
         case 'escolhaHorarioCancelamento':
@@ -229,13 +242,12 @@ async function stages(client, message) {
             break;
 
         case 'encerrarAtendimento':
-            await sendWppMessage(client, message.from, 'Atendimento encerrado.');
+            sendWppMessage(client, message.from, 'Atendimento encerrado.');
             userStages[message.from] = 'default';
             break;
 
         default:
-            console.log('mensagem no default: ', message.body)
-            console.log('userStages no default --', userStages[message.from]);
+            console.log('userStages no default == ', userStages[message.from]);
             await sendWppMessage(client, message.from, 'Seja bem-vindo! Escolha a opção desejada: \n*1* - Agendar horário\n*2* - Cancelar horário agendado\n*3* - Encerrar Atendimento');
             switch (message.body) {
                 case '1':
@@ -254,5 +266,5 @@ async function stages(client, message) {
             break;
     }
 
-    console.log('userStages no final --', userStages[message.from]);
+    console.log('userStages no final == ', userStages[message.from]);
 }
