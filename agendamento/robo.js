@@ -204,7 +204,6 @@ async function stages(client, message) {
 
         case 'aguardandoNomeCompletoCancelamento':
             const nomeCompleto = message.body;
-            // PRECISO ARRUMAR ISSO DAQUI.........
             listarEventosPorNomeCliente(nomeCompleto)
             .then(jsonData => {
                 const mensagemFormatada = formatarEventos(jsonData);
@@ -214,15 +213,6 @@ async function stages(client, message) {
             .catch(error => {
                 console.error('Ocorreu um erro ao fazer a solicitação:', error);
             });                
-            // try {
-            //     const jsonData = await listarEventosPorNomeCliente(nomeCompleto);
-            //     const mensagemFormatada = formatarEventos(jsonData);
-            //     await sendWppMessage(client, message.from, mensagemFormatada);
-            //     userStages[message.from] = 'escolhaHorarioCancelamento';
-            //     break;
-            // } catch (error) {
-            //     console.error('Ocorreu um erro ao fazer a solicitação:', error);
-            // }
             break;
         
         case 'escolhaHorarioCancelamento':
@@ -265,6 +255,6 @@ async function stages(client, message) {
             }
             break;
     }
-
+    
     console.log('userStages no final == ', userStages[message.from]);
 }
