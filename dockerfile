@@ -5,7 +5,9 @@ FROM python:3.8 as python-stage
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-COPY . /app
+COPY . .
+
+RUN chmod +x start.sh
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
@@ -17,6 +19,9 @@ WORKDIR /app
 
 # Copy over the python stage
 COPY --from=python-stage /app /app
+
+# Install node modules
+RUN npm install
 
 # Make ports available to the world outside this container
 EXPOSE 5000
