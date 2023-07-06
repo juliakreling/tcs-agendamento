@@ -1,0 +1,9 @@
+2023/07/05-05:50:15.435 8103 Reusing MANIFEST /Users/juliagabrielekreling/tcs-primeira-entrega/chatbot/tokens/whatsbot-enviar-mensagem/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2023/07/05-05:50:15.435 8103 Recovering log #11
+2023/07/05-05:50:15.463 8103 Reusing old log /Users/juliagabrielekreling/tcs-primeira-entrega/chatbot/tokens/whatsbot-enviar-mensagem/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000011.log 
+2023/07/05-05:50:37.847 a903 Compacting 1@1 + 1@2 files
+2023/07/05-05:50:37.885 a903 Generated table #15@1: 42795 keys, 1557677 bytes
+2023/07/05-05:50:37.885 a903 Compacted 1@1 + 1@2 files => 1557677 bytes
+2023/07/05-05:50:37.893 a903 compacted to: files[ 0 0 1 0 0 0 0 ]
+2023/07/05-05:50:37.893 a903 Delete type=2 #13
+2023/07/05-05:50:37.893 a903 Delete type=2 #5
