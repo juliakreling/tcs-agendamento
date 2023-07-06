@@ -1,0 +1,25 @@
+2023/07/06-01:02:09.730 8303 Reusing MANIFEST /Users/juliagabrielekreling/tcs-primeira-entrega/chatbot/tokens/whatsbot-responder/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2023/07/06-01:02:09.730 8303 Recovering log #175
+2023/07/06-01:02:09.753 8303 Reusing old log /Users/juliagabrielekreling/tcs-primeira-entrega/chatbot/tokens/whatsbot-responder/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000175.log 
+2023/07/06-01:02:20.974 8303 Level-0 table #181: started
+2023/07/06-01:02:20.992 8303 Level-0 table #181: 1152837 bytes OK
+2023/07/06-01:02:20.999 8303 Delete type=0 #175
+2023/07/06-01:02:21.224 8303 Compacting 1@1 + 2@2 files
+2023/07/06-01:02:21.258 8303 Generated table #182@1: 55632 keys, 2239456 bytes
+2023/07/06-01:02:21.286 8303 Generated table #183@1: 76396 keys, 1718972 bytes
+2023/07/06-01:02:21.286 8303 Compacted 1@1 + 2@2 files => 3958428 bytes
+2023/07/06-01:02:21.293 8303 compacted to: files[ 0 0 2 0 0 0 0 ]
+2023/07/06-01:02:21.294 8303 Delete type=2 #177
+2023/07/06-01:02:21.294 8303 Delete type=2 #181
+2023/07/06-01:02:21.294 8303 Delete type=2 #178
+2023/07/06-01:03:36.232 a903 Level-0 table #185: started
+2023/07/06-01:03:36.263 a903 Level-0 table #185: 1184635 bytes OK
+2023/07/06-01:03:36.273 a903 Delete type=0 #180
+2023/07/06-01:03:36.485 8303 Compacting 1@1 + 2@2 files
+2023/07/06-01:03:36.548 8303 Generated table #186@1: 55191 keys, 2241405 bytes
+2023/07/06-01:03:36.583 8303 Generated table #187@1: 79473 keys, 1826431 bytes
+2023/07/06-01:03:36.583 8303 Compacted 1@1 + 2@2 files => 4067836 bytes
+2023/07/06-01:03:36.591 8303 compacted to: files[ 0 0 2 0 0 0 0 ]
+2023/07/06-01:03:36.591 8303 Delete type=2 #183
+2023/07/06-01:03:36.591 8303 Delete type=2 #182
+2023/07/06-01:03:36.591 8303 Delete type=2 #185
