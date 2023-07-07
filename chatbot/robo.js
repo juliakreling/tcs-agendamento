@@ -35,9 +35,9 @@ wppconnect.create({
 })
 .then(async (client) => {
     client.onStateChange((state) => {
-        console.log('State changed: ', state);
+        console.log('Mudança de estado: ', state);
         if(state === 'CONNECTED') {
-            cron.schedule('*/20 * * * *', function(){
+            cron.schedule('*/10 * * * *', function(){
                 enviarLembretes(client);
             });
         }
@@ -48,7 +48,7 @@ wppconnect.create({
     });
 })
 .catch((error) => {
-    console.error('Failed to create client: ', error);
+    console.error('Erro ao criar cliente: ', error);
 });
 
 

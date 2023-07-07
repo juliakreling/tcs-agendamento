@@ -58,13 +58,13 @@ class CancelarEvento():
             print('Ocorreu um erro: %s' % error)
 
 
-editar_eventos = CancelarEvento()
+cancelar_eventos = CancelarEvento()
 app = Flask(__name__)
 
 
 @app.route('/cancelar_evento/<string:id_evento>', methods=['GET'])
-def editar_evento(id_evento):
-    editar_eventos.cancelaEvento(id_evento)
+def cancelar_evento(id_evento):
+    cancelar_eventos.cancelaEvento(id_evento)
     return jsonify({"message": "Evento cancelado com sucesso!"})
 
 
